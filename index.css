@@ -1,0 +1,55 @@
+textarea {
+    background: inherit;
+    border: none;
+}
+input {
+    background: inherit;
+    border: none;
+}
+.encode-area {
+    background: #fcc;
+}
+.decode-area {
+    background: #BAEEBA;
+}
+.code-block {
+    padding-top: 6px;
+    padding-left: 6px;
+    overflow: hidden;
+}
+.block-content {
+    float: left;
+}
+
+.name-tag {
+    float: left;
+    padding-right: 10px;
+    background: #f5f5dc;
+}
+.name-tag input {
+    width: 50px;
+}
+
+.edit-area {
+    width: 400px;
+    overflow-y:visible
+}
+
+.btn {
+    padding: 0 10px
+}
+.btn.decode {
+    background: #5f9ea0;
+}
+.btn.encode {
+    background: #cd5c5c;
+}
+.btn.del {
+    background: #000;
+    color: #fff;
+}
+
+.message {
+    background: #ff0;
+    color: #f00;
+}
