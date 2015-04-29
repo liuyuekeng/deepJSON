@@ -6,6 +6,14 @@ input {
     background: inherit;
     border: none;
 }
+
+.hide {
+    display: none;
+}
+.show {
+    display: ;
+}
+
 .encode-area {
     background: #fcc;
 }
@@ -27,7 +35,10 @@ input {
     background: #f5f5dc;
 }
 .name-tag input {
-    width: 50px;
+    width: 70px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .edit-area {
@@ -48,7 +59,18 @@ input {
     background: #000;
     color: #fff;
 }
-
+.btn.add {
+    background: #f0f8ff;
+}
+.btn.confirm {
+    background: #008080;
+}
+.btn.cancel {
+    background: #b22222;
+}
+.add-node-contol input {
+    width: 100px;
+}
 .message {
     background: #ff0;
     color: #f00;

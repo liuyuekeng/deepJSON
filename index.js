@@ -199,10 +199,80 @@ var DecodeArea = React.createClass({
             <div className="block-content">
                 {node}
                 <a className="btn encode" onClick={this.encode}>encode</a>
+                <AddNodeContol
+                    dataModify={this.props.dataModify}
+                    path={this.props.path}
+                    parentObj={this}/>
                 <a className="btn del" onClick={this.del}>delete</a>
                 <Message className="message" message={this.state.message} />
             </div>
         </div>
+        );
+    }
+});
+var AddNodeContol = React.createClass({
+    getInitialState: function () {
+        return ({
+            status: 0,        //0:init, 1:edit
+            data: "new proterty"
+        });
+    },
+    add: function () {
+        if (this.state.status === 0) {
+            this.show();
+        }
+    },
+    cancel: function () {
+        if (this.state.status === 1) {
+            this.hide();
+        }
+    },
+    confirm: function () {
+        var ret = this.props.dataModify(this.props.path,
+            this.state.data,
+            'addNode');
+        if (!ret.error) {
+            this.hide();
+        }
+        retHandler.call(this.props.parentObj, ret);
+    },
+    onChange: function () {
+        this.setState({
+            data: this.refs.input.getDOMNode().value
+        });
+    },
+    show: function () {
+        this.setState({
+            status: 1,
+        });
+    },
+    hide: function () {
+        this.setState({
+            status: 0,
+            data: ""
+        });
+    },
+    render: function () {
+        return (
+        <span className="add-node-contol">
+            <input
+                ref="input"
+                value={this.state.data}
+                onChange={this.onChange}
+                className={this.state.status ? 'show' : 'hide'}/>
+            <a
+                className={"btn cancel" + (this.state.status ? ' show' : ' hide')}
+                ref="cancelBtn"
+                onClick={this.cancel}>×</a>
+            <a
+                className={"btn confirm" + (this.state.status ? ' show' : ' hide')}
+                ref="confirmBtn"
+                onClick={this.confirm}>√</a>
+            <a
+                className={"btn add" + (this.state.status ? ' hide' : ' show')}
+                ref="addBtn"
+                onClick={this.add}>add node</a>
+        </span>
         );
     }
 });
@@ -298,11 +368,23 @@ var DataContent = React.createClass({
                     ret.message = errorMessage[2] + "can not rename root node"; 
                     return ret
                     break;
+                case "addNode":
+                    //can not use existence name
+                    console.log(target);
+                    if (target.hasOwnProperty(val)) {
+                        ret.error = 2,
+                        ret.message = errorMessage[2] + "useing existence name";
+                        return ret
+                    }
+                    target[val] = "";
+                    break;
             }
             this.setState({
                 data: target
             });
-            return target;
+            ret.error = 0;
+            ret.message = option + " success !"
+            return ret;
         }
         for (var i = 0; i < len; i ++) {
             if (!target.hasOwnProperty(path[i])) {
@@ -326,16 +408,25 @@ var DataContent = React.createClass({
                         target[val] = target[path[i]];
                         delete target[path[i]];
                         break;
+                    case "addNode":
+                        //can not use existence name
+                        if (target[path[i]].hasOwnProperty(val)) {
+                            ret.error = 2,
+                            ret.message = errorMessage[2] + "useing existence name";
+                            return ret
+                        }
+                        target[path[i]][val] = "";
+                        break;
                 }
                 this.setState({
                     data: this.state.data
                 });
-                return target;
+                ret.error = 0;
+                ret.message = option + " success !"
+                return ret;
             }
             target = target[path[i]];
         }
-    },
-    messageModify: function (path, val) {
     },
     render: function () {
         return (
