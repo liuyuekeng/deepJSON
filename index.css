@@ -6,6 +6,10 @@ input {
     background: inherit;
     border: none;
 }
+body {
+    margin: 0;
+    padding: 0;
+}
 
 .hide {
     display: none;
@@ -15,10 +19,11 @@ input {
 }
 
 .encode-area {
-    background: #fcc;
+    background: #BAEEBA;
+    border-left: 1px #aaa solid;
 }
 .decode-area {
-    background: #BAEEBA;
+    background: #cfc;
 }
 .code-block {
     padding-top: 6px;
@@ -35,15 +40,21 @@ input {
     background: #f5f5dc;
 }
 .name-tag input {
-    width: 70px;
+    width: 40px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+.name-tag input:focus {
+    width: 100px;
+}
 
 .edit-area {
-    width: 400px;
+    width: 150px;
     overflow-y:visible
+}
+.edit-area:focus {
+    width: 300px;
 }
 
 .btn {
