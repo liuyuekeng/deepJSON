@@ -90,6 +90,28 @@ function retHandler (ret) {
         });
     }
 }
+
+/**
+ * try to sort porterty of obj
+ * although obj is disordered
+ * so it work sometimes
+ */
+function sortObj (obj) {
+    var array = [];
+    for (var item in obj) {
+        if (obj.hasOwnProperty(item)) {
+            array.push(item);
+        }
+    }
+    array.sort();
+    var ret = {};
+    var len = array.length;
+    for (var i = 0; i < len; i++) {
+        var index = array[i];
+        ret[index] = obj[index];
+    }
+    return ret;
+}
 var EncodeArea = React.createClass({
     getInitialState: function () {
         return {
@@ -133,7 +155,7 @@ var EncodeArea = React.createClass({
                     ref="editArea"
                     className="edit-area"
                     onChange={this.contentEdit}
-                    defaultValue={this.props.data}></textarea>
+                    value={this.props.data}></textarea>
                 <br />
                 <a className="btn decode" onClick={this.decode}>decode</a>
                 <a className="btn del" onClick={this.del}>delete</a>
@@ -165,12 +187,16 @@ var DecodeArea = React.createClass({
         var ret = this.props.dataModify(this.props.path, 0, 'del');
         retHandler.call(this, ret);
     },
+    sort: function () {
+        var ret = this.props.dataModify(this.props.path, 0, 'sort');
+        retHandler.call(this,ret);
+    },
     render: function () {
         var data = this.props.data;
         var nodesData = [];
         var itemPath;
         var self = this;
-        for (item in data) {
+        for (var item in data) {
             if (data.hasOwnProperty(item)) {
                 itemPath = this.props.path.slice(0);
                 itemPath.push(item);
@@ -203,6 +229,7 @@ var DecodeArea = React.createClass({
                     dataModify={this.props.dataModify}
                     path={this.props.path}
                     parentObj={this}/>
+                <a className="btn sort" onClick={this.sort}>sort</a>
                 <a className="btn del" onClick={this.del}>delete</a>
                 <Message className="message" message={this.state.message} />
             </div>
@@ -286,7 +313,36 @@ var Message = React.createClass({
     }
 });
 var NameTag = React.createClass({
-    modName: function (e) {
+    getInitialState: function () {
+        return {
+            status: 0,
+            data: this.props.data
+        };
+    },
+    onChange: function (e) {
+        var inputNode = this.refs.input.getDOMNode();
+        var str = inputNode.value;
+        this.setState({
+            data: str
+        });
+    },
+    showEdit: function () {
+        this.setState({
+            status: 1,
+            data: this.props.data
+        });
+        var self = this;
+        setTimeout(function () {
+            self.refs.input.getDOMNode().focus();
+        }, 0);
+    },
+    hideEdit: function () {
+        this.setState({
+            status: 0
+        });
+        this.modName();
+    },
+    modName: function () {
         var inputNode = this.refs.input.getDOMNode();
         var str = inputNode.value;
         var ret = this.props.dataModify(this.props.path, str, 'rename');
@@ -299,9 +355,16 @@ var NameTag = React.createClass({
         return (
         <div className="name-tag">
             <input
+                ref="name"
+                className={"name " + (this.state.status ? "hide" : "show")}
+                value={this.props.data}
+                onClick={this.showEdit} />
+            <input
                 ref="input"
-                defaultValue={this.props.data}
-                onBlur={this.modName}
+                className={this.state.status ? "show" : "hide"}
+                value={this.state.data}
+                onBlur={this.hideEdit}
+                onChange={this.onChange}
                 /> :
         </div>
         );
@@ -335,7 +398,7 @@ var Node = React.createClass({
 var DataContent = React.createClass({
     getInitialState: function () {
         return {
-            data: "{\"a\":\"str\", \"b\":{\"c\":123, \"d\":\"{\\\"e\\\": \\\"321\\\"}\"}}",
+            data: "{\"put\":\"your\", \"JSON\":{\"here\":123, \"d\":\"{\\\"e\\\": \\\"321\\\"}\"}}",
             path: [],
             message: {
                 data: '',
@@ -344,7 +407,7 @@ var DataContent = React.createClass({
         }
     },
     dataModify: function (path, val, option) {
-        //option: mod, del, rename
+        //option: mod, del, rename, addNode, sort
         //default option: mod
         option = option ? option : "mod";
         var target = this.state.data;
@@ -370,13 +433,15 @@ var DataContent = React.createClass({
                     break;
                 case "addNode":
                     //can not use existence name
-                    console.log(target);
                     if (target.hasOwnProperty(val)) {
                         ret.error = 2,
                         ret.message = errorMessage[2] + "useing existence name";
                         return ret
                     }
                     target[val] = "";
+                    break;
+                case "sort":
+                    target = sortObj(target);
                     break;
             }
             this.setState({
@@ -416,6 +481,9 @@ var DataContent = React.createClass({
                             return ret
                         }
                         target[path[i]][val] = "";
+                        break;
+                    case 'sort':
+                        target[path[i]] = sortObj(target[path[i]]);
                         break;
                 }
                 this.setState({

@@ -40,17 +40,17 @@ body {
     background: #f5f5dc;
 }
 .name-tag input {
-    width: 40px;
+    width: 100px;
+}
+.name-tag .name {
+    max-width: 50px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-.name-tag input:focus {
-    width: 100px;
-}
 
 .edit-area {
-    width: 150px;
+    width: 190px;
     overflow-y:visible
 }
 .edit-area:focus {
@@ -58,7 +58,8 @@ body {
 }
 
 .btn {
-    padding: 0 10px
+    padding: 0 10px;
+    cursor: pointer;
 }
 .btn.decode {
     background: #5f9ea0;
@@ -72,6 +73,9 @@ body {
 }
 .btn.add {
     background: #f0f8ff;
+}
+.btn.sort {
+    background: #bc8f8f;
 }
 .btn.confirm {
     background: #008080;
